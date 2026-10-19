@@ -1,0 +1,1 @@
+model,train_fraction,seed,accuracy,macro_f1,defect_precision,defect_recall,tn,fp,fn,tp,train_time_s,infer_latency_ms_mean,model_size_mb,dataset_layout,n_train,n_val,n_test

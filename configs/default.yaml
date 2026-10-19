@@ -1,0 +1,42 @@
+# Reproducible defaults for casting defect classification experiments.
+seed: 42
+device: auto  # cuda if available, else cpu
+
+data:
+  root: data/raw
+  # Layout: see README. Prefer original non-augmented (~1300 images).
+  layout: auto  # auto | original_flat | kaggle_split
+  image_size: 224
+  batch_size: 32
+  num_workers: 2
+  # Hold-out fractions from the training pool (after removing fixed test set).
+  val_fraction: 0.15
+  train_fractions: [0.25, 0.5, 1.0]
+  # When using Kaggle augmented filenames (cast_*_*), group by stem to avoid leakage.
+  group_augmentations: true
+  grayscale_to_rgb: true
+
+models:
+  vit:
+    id: google/vit-base-patch16-224-in21k
+    learning_rate: 2.0e-5
+    weight_decay: 0.01
+    epochs: 30
+  resnet:
+    architecture: resnet18
+    pretrained: true
+    learning_rate: 1.0e-4
+    weight_decay: 1.0e-4
+    epochs: 30
+
+training:
+  early_stopping_patience: 5
+  early_stopping_metric: val_macro_f1
+  maximize_metric: true
+  label_smoothing: 0.0
+
+paths:
+  checkpoints: results/checkpoints
+  figures: results/figures
+  logs: results/logs
+  comparison_csv: results/comparison_table.csv
