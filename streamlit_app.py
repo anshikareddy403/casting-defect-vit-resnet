@@ -83,10 +83,9 @@ def resolve_checkpoint_sidebar() -> Path | None:
 
 def gradcam_overlay(model, tensor, device) -> np.ndarray:
     cam_engine = ResNetGradCAM(model.to(device))
-    img = tensor.unsqueeze(0).to(device)
-    img.requires_grad_(True)
-    pred = int(model(img).argmax(dim=1).item())
-    heat = cam_engine(img, class_idx=pred)
+    batch = tensor.unsqueeze(0).to(device)
+    pred = int(model(batch).argmax(dim=1).item())
+    heat = cam_engine(batch, class_idx=pred)
     mean = torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1)
     std = torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1)
     denorm = (tensor.cpu() * std + mean).permute(1, 2, 0).numpy().clip(0, 1)

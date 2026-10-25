@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import csv
+from pathlib import Path
 from typing import Any
 
 import numpy as np
@@ -65,3 +67,40 @@ def format_metrics_row(
         "infer_latency_ms_mean": infer_latency_ms,
         "model_size_mb": model_size_mb,
     }
+
+
+CSV_FIELDNAMES = [
+    "model",
+    "train_fraction",
+    "seed",
+    "accuracy",
+    "macro_f1",
+    "defect_precision",
+    "defect_recall",
+    "tn",
+    "fp",
+    "fn",
+    "tp",
+    "train_time_s",
+    "infer_latency_ms_mean",
+    "model_size_mb",
+    "dataset_layout",
+    "n_train",
+    "n_val",
+    "n_test",
+]
+
+
+def append_metrics_csv(row: dict[str, Any], csv_path: Path, **extra: Any) -> Path:
+    """Append one experiment row to comparison_table.csv (creates file if missing)."""
+    from src.utils import ensure_dir
+
+    full = {**row, **extra}
+    ensure_dir(csv_path.parent)
+    write_header = not csv_path.exists()
+    with open(csv_path, "a", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=CSV_FIELDNAMES, extrasaction="ignore")
+        if write_header:
+            writer.writeheader()
+        writer.writerow({k: full.get(k) for k in CSV_FIELDNAMES})
+    return csv_path

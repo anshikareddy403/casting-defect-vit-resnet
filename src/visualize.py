@@ -111,7 +111,9 @@ class ResNetGradCAM:
 
     def __call__(self, image_tensor: torch.Tensor, class_idx: int | None = None) -> np.ndarray:
         self.model.eval()
-        image_tensor = image_tensor.unsqueeze(0)
+        if image_tensor.dim() == 3:
+            image_tensor = image_tensor.unsqueeze(0)
+        image_tensor = image_tensor.detach().requires_grad_(True)
         logits = self.model(image_tensor)
         if class_idx is None:
             class_idx = int(logits.argmax(dim=1).item())
