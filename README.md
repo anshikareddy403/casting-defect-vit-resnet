@@ -50,6 +50,4 @@ results/comparison_table.csv
 report/                # report + presentation only
 ```
 
-## Repository
 
-https://github.com/anshikareddy403/casting-defect-vit-resnet
